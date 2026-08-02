@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+
+# Environment variables and secrets
+.env
+
+# Local data
+data/raw/*
+!data/raw/.gitkeep
+
+# VS Code
+.vscode/
+
+# Operating system files
+.DS_Store
+Thumbs.db
