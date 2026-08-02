@@ -22,7 +22,7 @@ Station ID: 48549
 ## Architecture
 
 ```mermaid
-flowchart LR
+flowchart TD
     A[IESO Demand CSV] --> C[Raw File Storage]
     B[ECCC GeoMet API] --> C
     C --> D[Python Readers]
