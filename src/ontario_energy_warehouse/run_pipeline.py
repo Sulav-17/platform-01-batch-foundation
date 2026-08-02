@@ -1,5 +1,9 @@
 from datetime import datetime, timezone
 
+from ontario_energy_warehouse.download_ieso import download_ieso_file
+from ontario_energy_warehouse.download_weather import (
+    download_weather_backfill,
+)
 from ontario_energy_warehouse.load_ieso import load_ieso_data
 from ontario_energy_warehouse.load_weather import load_weather_data
 
@@ -9,6 +13,16 @@ def run_pipeline() -> None:
 
     print("Ontario Energy Warehouse pipeline")
     print(f"Started: {started_at.isoformat()}")
+    print()
+
+    print("Downloading IESO data...")
+    ieso_file = download_ieso_file()
+    print(f"IESO raw file ready: {ieso_file}")
+    print()
+
+    print("Downloading weather data...")
+    download_weather_backfill()
+    print("Weather raw files ready")
     print()
 
     ieso_received, ieso_changed = load_ieso_data()
