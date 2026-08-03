@@ -2,8 +2,10 @@ from pathlib import Path
 from src.ontario_energy_warehouse.validate_ieso import validate_ieso_data
 import pandas as pd
 
+from ontario_energy_warehouse.raw_storage import get_raw_root
 
-RAW_DIR = Path("data/raw/ieso")
+
+RAW_DIR = get_raw_root() / "ieso"
 
 EXPECTED_COLUMNS = [
     "Date",

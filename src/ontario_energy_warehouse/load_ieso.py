@@ -4,10 +4,14 @@ from pathlib import Path
 import pandas as pd
 
 from ontario_energy_warehouse.database import get_connection
+from ontario_energy_warehouse.raw_storage import (
+    using_s3_raw_storage,
+)
 from ontario_energy_warehouse.read_ieso import (
     find_latest_raw_file,
     read_ieso_file,
 )
+from ontario_energy_warehouse.s3_storage import s3_uri_for_file
 from ontario_energy_warehouse.validate_ieso import validate_ieso_data
 
 
@@ -23,6 +27,12 @@ def calculate_file_hash(file_path: Path) -> str:
 
 def load_ieso_data() -> tuple[int, int]:
     source_path = find_latest_raw_file()
+
+    if using_s3_raw_storage():
+        source_reference = s3_uri_for_file(source_path)
+    else:
+        source_reference = str(source_path)
+
     content_hash = calculate_file_hash(source_path)
 
     connection = get_connection()
@@ -45,7 +55,7 @@ def load_ieso_data() -> tuple[int, int]:
                 (
                     "ieso_hourly_demand",
                     "running",
-                    str(source_path),
+                    source_reference,
                     content_hash,
                 ),
             )
@@ -97,7 +107,7 @@ def load_ieso_data() -> tuple[int, int]:
                         int(row["Hour"]),
                         int(row["Market Demand"]),
                         int(row["Ontario Demand"]),
-                        str(source_path),
+                        source_reference,
                     ),
                 )
 

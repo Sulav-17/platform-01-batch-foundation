@@ -6,6 +6,7 @@ from pathlib import Path
 import requests
 
 from ontario_energy_warehouse.s3_storage import upload_raw_file
+from ontario_energy_warehouse.raw_storage import get_raw_root
 
 API_URL = (
     "https://api.weather.gc.ca/"
@@ -14,7 +15,7 @@ API_URL = (
 
 STATION_ID = 48549
 START_DATE = date(2026, 1, 1)
-RAW_DIR = Path("data/raw/eccc")
+RAW_DIR = get_raw_root() / "eccc"
 
 
 def create_month_ranges(

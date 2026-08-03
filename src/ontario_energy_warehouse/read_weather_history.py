@@ -8,8 +8,13 @@ from src.ontario_energy_warehouse.read_weather import (
 from src.ontario_energy_warehouse.validate_weather_history import (
     validate_weather_completeness,
 )
+from ontario_energy_warehouse.raw_storage import (
+    get_raw_root,
+    using_s3_raw_storage,
+)
+from ontario_energy_warehouse.s3_storage import s3_uri_for_file
 
-RAW_DIR = Path("data/raw/eccc/2026")
+RAW_DIR = get_raw_root() / "eccc" / "2026"
 
 
 def read_weather_history() -> pd.DataFrame:
@@ -26,7 +31,12 @@ def read_weather_history() -> pd.DataFrame:
 
     for raw_file in raw_files:
         data = read_weather_file(raw_file)
-        data["source_file"] = raw_file.name
+
+        if using_s3_raw_storage():
+            data["source_file"] = s3_uri_for_file(raw_file)
+        else:
+            data["source_file"] = raw_file.name
+
         monthly_data.append(data)
 
     combined = pd.concat(

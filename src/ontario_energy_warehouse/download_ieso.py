@@ -5,9 +5,10 @@ from pathlib import Path
 import requests
 
 from ontario_energy_warehouse.s3_storage import upload_raw_file
+from ontario_energy_warehouse.raw_storage import get_raw_root
 
 IESO_URL = "https://reports-public.ieso.ca/public/Demand/PUB_Demand.csv"
-RAW_DIR = Path("data/raw/ieso")
+RAW_DIR = get_raw_root() / "ieso"
 
 def download_ieso_file() -> Path:
     """Download a new IESO snapshot only when its content has changed."""
