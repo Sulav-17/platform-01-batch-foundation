@@ -4,6 +4,8 @@ from pathlib import Path
 
 import requests
 
+from ontario_energy_warehouse.s3_storage import upload_raw_file
+
 IESO_URL = "https://reports-public.ieso.ca/public/Demand/PUB_Demand.csv"
 RAW_DIR = Path("data/raw/ieso")
 
@@ -23,8 +25,13 @@ def download_ieso_file() -> Path:
     )
 
     if existing_files:
-        print(f"No new snapshot. Existing file: {existing_files[0]}")
-        return existing_files[0]
+        existing_file = existing_files[0]
+
+        print(f"No new snapshot. Existing file: {existing_file}")
+
+        upload_raw_file(existing_file)
+
+        return existing_file
 
     downloaded_at = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
 
@@ -34,6 +41,8 @@ def download_ieso_file() -> Path:
     )
 
     snapshot_path.write_bytes(file_content)
+
+    upload_raw_file(snapshot_path)
 
     print(f"New snapshot saved: {snapshot_path}")
     print(f"File size: {snapshot_path.stat().st_size:,} bytes")

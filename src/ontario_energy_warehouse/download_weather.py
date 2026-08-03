@@ -5,6 +5,7 @@ from pathlib import Path
 
 import requests
 
+from ontario_energy_warehouse.s3_storage import upload_raw_file
 
 API_URL = (
     "https://api.weather.gc.ca/"
@@ -96,11 +97,16 @@ def download_weather_month(
     )
 
     if existing_files:
+        existing_file = existing_files[0]
+
         print(
             f"Already downloaded: "
             f"{start_date} to {end_date}"
         )
-        return existing_files[0]
+
+        upload_raw_file(existing_file)
+
+        return existing_file
 
     downloaded_at = datetime.now(timezone.utc).strftime(
         "%Y%m%dT%H%M%SZ"
@@ -112,6 +118,8 @@ def download_weather_month(
     )
 
     file_path.write_bytes(file_content)
+
+    upload_raw_file(file_path)
 
     print(
         f"Saved {len(records):,} records: "
