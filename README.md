@@ -47,17 +47,17 @@ Station ID: 48549
 
 The pipeline downloads monthly weather data starting from January 1, 2026.
 
-## Simple architecture
+## Architecture
 
 ```mermaid
-flowchart LR
-    A[IESO CSV] --> C[Python Pipeline]
-    B[ECCC Weather API] --> C
-    C --> D[Validation]
-    D --> E[Raw Storage]
-    D --> F[PostgreSQL]
-    E --> G[Local Files or Amazon S3]
-    F --> H[Local PostgreSQL or Amazon RDS]
+flowchart TD
+    A[IESO Demand CSV and ECCC GeoMet API]
+    A --> B[Python Batch Pipeline]
+    B --> C["Raw Storage (local data/raw or Amazon S3)"]
+    C --> D[Readers and Validation]
+    D --> E[Incremental Loaders]
+    E --> F["PostgreSQL Warehouse (local Docker or Amazon RDS)"]
+    F --> G[Ingestion Run History]
 ```
 
 ## What the pipeline does
