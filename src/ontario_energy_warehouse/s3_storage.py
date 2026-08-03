@@ -9,7 +9,8 @@ from dotenv import load_dotenv
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 RAW_ROOT = PROJECT_ROOT / "data" / "raw"
 
-load_dotenv(PROJECT_ROOT / ".env")
+ENV_FILE = os.getenv("ENV_FILE", ".env")
+load_dotenv(PROJECT_ROOT / ENV_FILE, override=True)
 
 
 def upload_raw_file(file_path: Path) -> str | None:

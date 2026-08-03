@@ -6,10 +6,14 @@ from dotenv import load_dotenv
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-load_dotenv(PROJECT_ROOT / ".env")
+ENV_FILE = os.getenv("ENV_FILE", ".env")
+
+load_dotenv(PROJECT_ROOT / ENV_FILE, override=True)
 
 
 def get_connection():
+    """Connect using either the local or AWS environment file."""
+
     required_settings = [
         "POSTGRES_HOST",
         "POSTGRES_PORT",
@@ -26,7 +30,10 @@ def get_connection():
 
     if missing_settings:
         missing_names = ", ".join(missing_settings)
-        raise RuntimeError(f"Missing database settings: {missing_names}")
+
+        raise RuntimeError(
+            f"Missing database settings: {missing_names}"
+        )
 
     return psycopg.connect(
         host=os.environ["POSTGRES_HOST"],
@@ -34,4 +41,5 @@ def get_connection():
         dbname=os.environ["POSTGRES_DB"],
         user=os.environ["POSTGRES_USER"],
         password=os.environ["POSTGRES_PASSWORD"],
+        sslmode=os.getenv("POSTGRES_SSLMODE", "prefer"),
     )
